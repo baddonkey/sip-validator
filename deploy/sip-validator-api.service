@@ -1,0 +1,27 @@
+# Bare-metal deployment. Prerequisites (as root):
+#   apt install wine wine64 wine32 xvfb xauth python3-venv curl
+#   useradd -m kost
+#   sudo -u kost bash /opt/sip-validator-api/scripts/install-kost-tools.sh
+#   python3 -m venv /opt/sip-validator-api/.venv && /opt/sip-validator-api/.venv/bin/pip install -r /opt/sip-validator-api/requirements.txt
+[Unit]
+Description=SIP Validator Service (KOST-Tools via Wine)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=kost
+Group=kost
+WorkingDirectory=/opt/sip-validator-api
+Environment=WINEPREFIX=/home/kost/.wine
+Environment=WINEDEBUG=-all
+Environment="KOSTVAL_LAUNCHER=xvfb-run -a"
+Environment=SIP_VALIDATOR_DATA_DIR=/var/lib/sip-validator-api
+EnvironmentFile=-/etc/sip-validator-api.env
+StateDirectory=sip-validator-api
+ExecStart=/opt/sip-validator-api/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8001
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

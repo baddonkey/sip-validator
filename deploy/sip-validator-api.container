@@ -1,0 +1,23 @@
+# Podman Quadlet. Build:   podman build -t localhost/sip-validator-api:latest -f Containerfile .
+# Install (rootless): copy this and sip-validator-data.volume to ~/.config/containers/systemd/
+#   (rootful: /etc/containers/systemd/), then: systemctl --user daemon-reload && systemctl --user start sip-validator-api
+# Rootless user services need lingering to start at boot: loginctl enable-linger <user>
+[Unit]
+Description=SIP Validator Service (KOST-Tools via Wine, Podman)
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=localhost/sip-validator-api:latest
+ContainerName=sip-validator-api
+PublishPort=8001:8000
+Volume=sip-validator-data.volume:/data
+# Enable API key: printf '%s' "$KEY" | podman secret create sip-validator-api-key -
+# Secret=sip-validator-api-key,type=env,target=SIP_VALIDATOR_API_KEY
+NoNewPrivileges=true
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

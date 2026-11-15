@@ -1,0 +1,10 @@
+.git
+.venv
+data
+samples
+out
+.vscode
+.env
+.env.*
+client
+**/__pycache__

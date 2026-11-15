@@ -1,0 +1,19 @@
+# podman-compose up --build
+services:
+  sip-validator-api:
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: localhost/sip-validator-api:latest
+    ports:
+      - "8001:8000"
+    environment:
+      SIP_VALIDATOR_API_KEY: ${SIP_VALIDATOR_API_KEY:-}
+      KOSTVAL_API_KEY: ${KOSTVAL_API_KEY:-}
+      # KOSTVAL_CMD: 'C:\Program Files\KOST-Tools\KOST-Val\KOST-Val_cmd.exe'
+    volumes:
+      - sip-validator-data:/data
+    restart: unless-stopped
+
+volumes:
+  sip-validator-data:
