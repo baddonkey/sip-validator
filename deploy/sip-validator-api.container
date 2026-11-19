@@ -10,6 +10,7 @@ Wants=network-online.target
 [Container]
 Image=localhost/sip-validator-api:latest
 ContainerName=sip-validator-api
+RunInit=true
 PublishPort=8001:8000
 Volume=sip-validator-data.volume:/data
 # Enable API key: printf '%s' "$KEY" | podman secret create sip-validator-api-key -

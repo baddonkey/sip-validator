@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: Containerfile
     image: localhost/sip-validator-api:latest
+    init: true
     ports:
       - "8001:8000"
     environment:

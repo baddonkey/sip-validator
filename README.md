@@ -87,6 +87,12 @@ curl http://localhost:8001/health
 
 The response shows the KOST-Val command that was found. A `503` means the KOST-Val command-line tool was not found in the Wine prefix. In that case, set `KOSTVAL_CMD`.
 
+### Troubleshooting: `RuntimeError: can't start new thread`
+
+If polling returns HTTP `500` with this error, check whether the container has reached its PID limit. Run `podman top <container> pid ppid state comm` to look for zombie processes (`Z`) and compare `pids.current` with `pids.max` in `/sys/fs/cgroup` inside the container.
+
+The Compose and Quadlet configurations enable Podman's init process to reap orphaned Wine and KOST-Val processes. For a manual `podman run`, pass `--init`. To apply the fix to an existing Compose container, run `podman-compose up -d --force-recreate`. For Quadlet, install the updated `.container` file, then run `systemctl --user daemon-reload` and `systemctl --user restart sip-validator-api`. A restart clears in-memory job IDs; reports already saved to the data volume remain there.
+
 ## Configuration
 
 | Variable | Default | Description |
